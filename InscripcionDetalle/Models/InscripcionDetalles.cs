@@ -28,9 +28,9 @@ namespace InscripcionDetalle.Models
             Subtotal = 0;
             Creditos = 0;
         }
-        public InscripcionDetalles(int inscripcionDetalleId, int inscripcionId, int asignaturaId, int subTotal)
+        public InscripcionDetalles(int inscripcionDetallesId, int inscripcionId, int asignaturaId, int subTotal)
         {
-            InscripcionDetallesId = inscripcionDetalleId;
+            InscripcionDetallesId = inscripcionDetallesId;
             InscripcionId = inscripcionId;
             AsignaturaId = asignaturaId;
             Subtotal = subTotal;

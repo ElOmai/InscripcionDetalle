@@ -18,7 +18,7 @@ namespace InscripcionDetalle.Migrations
             modelBuilder
                 .HasAnnotation("ProductVersion", "3.1.2");
 
-            modelBuilder.Entity("InscripcionDetalle.Models.Asignatura", b =>
+            modelBuilder.Entity("InscripcionDetalles.Models.Asignatura", b =>
                 {
                     b.Property<int>("AsignaturaId")
                         .ValueGeneratedOnAdd()
@@ -44,7 +44,7 @@ namespace InscripcionDetalle.Migrations
                     b.ToTable("Asignatura");
                 });
 
-            modelBuilder.Entity("InscripcionDetalle.Models.Estudiante", b =>
+            modelBuilder.Entity("InscripcionDetalles.Models.Estudiante", b =>
                 {
                     b.Property<int>("EstudianteId")
                         .ValueGeneratedOnAdd()
@@ -66,7 +66,7 @@ namespace InscripcionDetalle.Migrations
                     b.ToTable("Estudiante");
                 });
 
-            modelBuilder.Entity("InscripcionDetalle.Models.Inscripcion", b =>
+            modelBuilder.Entity("InscripcionDetalles.Models.Inscripcion", b =>
                 {
                     b.Property<int>("InscripcionId")
                         .ValueGeneratedOnAdd()
@@ -99,9 +99,9 @@ namespace InscripcionDetalle.Migrations
                     b.ToTable("Inscripcion");
                 });
 
-            modelBuilder.Entity("InscripcionDetalle.Models.InscripcionDetalles", b =>
+            modelBuilder.Entity("InscripcionDetalles.Models.InscripcionDetalless", b =>
                 {
-                    b.Property<int>("InscripcionDetallesId")
+                    b.Property<int>("InscripcionDetallessId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
@@ -121,14 +121,14 @@ namespace InscripcionDetalle.Migrations
                     b.Property<int>("Subtotal")
                         .HasColumnType("INTEGER");
 
-                    b.HasKey("InscripcionDetallesId");
+                    b.HasKey("InscripcionDetallessId");
 
                     b.HasIndex("InscripcionId");
 
-                    b.ToTable("InscripcionDetalles");
+                    b.ToTable("InscripcionDetalless");
                 });
 
-            modelBuilder.Entity("InscripcionDetalle.Models.Pago", b =>
+            modelBuilder.Entity("InscripcionDetalles.Models.Pago", b =>
                 {
                     b.Property<int>("PagoId")
                         .ValueGeneratedOnAdd()
@@ -148,9 +148,9 @@ namespace InscripcionDetalle.Migrations
                     b.ToTable("Pago");
                 });
 
-            modelBuilder.Entity("InscripcionDetalle.Models.InscripcionDetalles", b =>
+            modelBuilder.Entity("InscripcionDetalles.Models.InscripcionDetalless", b =>
                 {
-                    b.HasOne("InscripcionDetalle.Models.Inscripcion", null)
+                    b.HasOne("InscripcionDetalles.Models.Inscripcion", null)
                         .WithMany("Detalles")
                         .HasForeignKey("InscripcionId")
                         .OnDelete(DeleteBehavior.Cascade)
