@@ -10,7 +10,6 @@
             <div class="card-body">
 
                 <div class="form-group row">
-                    <!--Inscripcion Id-->
                     <label for="InscripcionId " class="col-auto">Inscripcion Id</label>
                     <div class="input-group  col-sm-3">
                         <InputNumber @bind-Value="@Inscripcion.InscripcionId" class="form-control" />
@@ -19,7 +18,6 @@
                             <button type="button" class="btn btn-outline-info" @onclick="Buscar">Buscar</button>
                         </div>
                     </div>
-                    <!--Fecha-->
                     <label for="fecha">Fecha</label>
                     <div align="right" class="input-group col-md-6">
                         <div class="col-sm-6">
@@ -28,7 +26,6 @@
                         </div>
                     </div>
                 </div>
-                <!--Estudianteid-->
                 <div class="form-group row">
                     <label for="estudianteid">Estudiante</label>
                     <div class="col-md-6 no-padding">
@@ -43,13 +40,11 @@
                 </div>
 
                 <div class="form-group row">
-                    <!--Semestre-->
                     <label class="col-auto" for="Semestre">Semestre:</label>
                     <div class="col-4">
                         <InputText @bind-Value="@Inscripcion.Semestre" class="form-control" />
                         <ValidationMessage For="@(()=>Inscripcion.Semestre)" />
                     </div>
-                    <!--Limite de credito-->
                     <label class="col-auto" for="Limite">Limite de Creditos:</label>
                     <div class="col-4">
                         <InputNumber @bind-Value="@Inscripcion.Limite" class="form-control" @onfocusin="CalcularCreditos" @onfocusout="CalcularCreditos" />
@@ -60,7 +55,6 @@
                 <div class="form-group row">
                     <label for="Asignatura">Asignatura</label>
                     <div class="col-md-6 no-padding">
-                        <!--Asignaturas-->
                         <InputSelect @bind-Value="@AsignaturaSelect" class="form-control" @onchange="CargarAsignatura" @onclick="CargarAsignatura">
 
                             @if (ListaAsignatura.Count == 0)
@@ -79,7 +73,6 @@
                             }
                         </InputSelect>
                     </div>
-                    <!--Precio-->
                     <label class="col-auto" for="Precio">Precio:</label>
                     <div class="col-2">
                         <InputNumber @bind-Value="@Precio" class="form-control"></InputNumber>
@@ -94,7 +87,7 @@
                                 <tr>
                                     <th>Id</th>
                                     <th>Descripcion</th>
-                                    <th>Credito</th>
+                                    <th>Creditos</th>
                                     <th>Subtotal</th>
                                     <th></th>
                                 </tr>
@@ -126,8 +119,6 @@
                     <button type="button" class="btn btn-outline-secondary" @onclick="Limpiar">Limpiar</button>
                     <button type="submit" class="btn btn-outline-success">Guardar</button>
                     <button type="button" class="btn btn-outline-danger" data-toggle="modal" data-target="#exampleModal">Eliminar</button>
-
-                    <!-- Modal -->
                     <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                         <div class="modal-dialog" role="document">
                             <div class="modal-content">
@@ -147,7 +138,6 @@
                             </div>
                         </div>
                     </div>
-                    <!--fin de modal-->
                 </div>
 
                 <h5 class="text-success">@mensaje</h5>
