@@ -10,7 +10,7 @@ namespace InscripcionDetalle.Controllers
 {
     public class InscripcionDetallesController
     {
-        public List<InscripcionDetalles> GetInscripcions(Expression<Func<InscripcionDetalles, bool>> expression)
+        public List<InscripcionDetalles> GetInscripcion(Expression<Func<InscripcionDetalles, bool>> expression)
         {
             Contexto contexto = new Contexto();
             List<InscripcionDetalles> lista;

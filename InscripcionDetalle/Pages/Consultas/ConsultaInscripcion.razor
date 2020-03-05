@@ -1,0 +1,112 @@
+﻿@page "/ConsultaInscripcion"
+@using InscripcionDetalle.Models;
+@using InscripcionDetalle.Controllers;
+<h3>Consulta de Inscripcion</h3>
+
+<div class="form-group row">
+    <label for="filtro">Filtro</label>
+    <div class="input-group  col-sm-10">
+        <select class="form-control" @bind="Filtro">
+            <option value="" disabled selected>Seleccione un Criterio</option>
+            <option value="Todo">Todo</option>
+            <option value="Id">Id</option>
+            <option value="estudianteid">Estudiante Id</option>
+            <option value="monto">Monto</option>
+        </select>
+
+        <div align="right" class="input-group col-md-8">
+            <label for="criterio"> Criterio&nbsp;&nbsp; </label>
+            <input type="search" class="form-control" @bind-value="Criterio" />
+        </div>
+        <button type="button" class="btn btn-outline-success" @onclick="Buscar">Buscar</button>
+    </div>
+</div>
+<table class="table">
+    <thead class="thead-light">
+        <tr>
+            <th>Inscripcion Id</th>
+            <th>Estudiante Id</th>
+            <th>Semestre</th>
+            <th>Limite de Creditos</th>
+            <th>Creditos Tomados</th>
+            <th>Creditos Disponible</th>
+            <th>Fecha</th>
+            <th>Monto</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in lista)
+        {
+            <tr>
+                <th>@item.InscripcionId</th>
+                <th>@item.EstudianteId</th>
+                <th>@item.Semestre</th>
+                <th>@item.Limite</th>
+                <th>@item.Tomados</th>
+                <th>@item.Disponible</th>
+                <th>@item.Fecha.ToString("dd/MM/yyyy")</th>
+                <th>@item.Monto</th>
+                <td><a class="btn btn-sm btn-outline-primary" href="RegistroInscripcion/@item.InscripcionId">Ver</a></td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<h5 class="text-success">@mensaje</h5>
+
+@code {
+
+    private string Filtro { get; set; }
+    private string Criterio { get; set; }
+    private string mensaje;
+    public List<Inscripcion> lista;
+    protected override void OnInitialized()
+    {
+        lista = new List<Inscripcion>();
+    }
+
+    private void Buscar()
+    {
+        InscripncionController controller = new InscripncionController();
+        try
+        {
+            if (Filtro == null)
+            {
+                mensaje = "Debe seleccionar un Criterio";
+            }
+            else
+            {
+                lista = controller.GetInscripcion(a => true);
+
+                if (lista.Count == 0)
+                {
+                    mensaje = "No hay Incripciones";
+                }
+                else
+                {
+                    mensaje = "";
+                    switch (Filtro)
+                    {
+                        case "Todo":
+                            lista = controller.GetInscripcion(e => true);
+                            break;
+                        case "Id":
+                            lista = controller.GetInscripcion(e => e.InscripcionId == Convert.ToInt32(Criterio));
+                            break;
+                        case "estudianteid":
+                            lista = controller.GetInscripcion(e => e.EstudianteId == Convert.ToInt32(Criterio));
+                            break;
+                        case "monto":
+                            lista = controller.GetInscripcion(e => e.Monto == Convert.ToInt32(Criterio));
+                            break;
+                    }
+                }
+            }
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+    }
+}

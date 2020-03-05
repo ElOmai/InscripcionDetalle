@@ -1,0 +1,114 @@
+﻿@page "/ConsultaEstudiante"
+@using InscripcionDetalle.Models;
+@using InscripcionDetalle.Controllers;
+
+<h3>Consulta de Estudiantes</h3>
+
+<div class="form-group row">
+    <label for="filtro">Filtro</label>
+    <div class="input-group  col-sm-10">
+        <select class="form-control" @bind="Filtro">
+            <option value="" disabled selected>Seleccione un Criterio</option>
+            <option value="Todo">Todo</option>
+            <option value="Id">Id</option>
+            <option value="Matricula">Matricula</option>
+            <option value="Nombres">Nombres</option>
+        </select>
+
+        <div align="right" class="input-group col-md-8">
+            <label for="criterio"> Criterio&nbsp;&nbsp; </label>
+            <input type="search" class="form-control" @bind-value="Criterio" />
+        </div>
+        <button type="button" class="btn btn-outline-success" @onclick="Buscar">Buscar</button>
+    </div>
+</div>
+
+
+<table class="table">
+    <thead class="thead-light">
+        <tr>
+            <th>Estudiante Id</th>
+            <th>Matricula</th>
+            <th>Nombres</th>
+            <th>Balance</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in lista)
+        {
+            <tr>
+                <th>@item.EstudianteId</th>
+                <th>@item.Matricula</th>
+                <th>@item.Nombres</th>
+                <th>@item.Balance</th>
+                <td><a class="btn btn-sm btn-outline-primary" href="RegistroEstudiante/@item.EstudianteId">Ver</a></td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<h5 class="text-success">@mensaje</h5>
+
+
+@code {
+
+    private List<Estudiante> lista { get; set; }
+
+    private string Filtro { get; set; }
+    private string Criterio { get; set; }
+    private string mensaje;
+
+
+    protected override void OnInitialized()
+    {
+        lista = new List<Estudiante>();
+    }
+
+    private void Buscar()
+    {
+        EstudianteController controller = new EstudianteController();
+
+        try
+        {
+            if (Filtro == null)
+            {
+                mensaje = "Debe seleccionar un Criterio";
+            }
+            else
+            {
+                lista = controller.GetEstudiante(a => true);
+
+                if (lista.Count == 0)
+                {
+                    mensaje = "No hay Estudiante Registrado";
+                }
+                else
+                {
+                    mensaje = "";
+                    switch (Filtro)
+                    {
+                        case "Todo":
+                            lista = controller.GetEstudiante(e => true);
+                            break;
+                        case "Id":
+                            lista = controller.GetEstudiante(e => e.EstudianteId == Convert.ToInt32(Criterio));
+                            break;
+                        case "Matricula":
+                            lista = controller.GetEstudiante(e => e.Matricula == Criterio);
+                            break;
+                        case "Nombres":
+                            lista = controller.GetEstudiante(e => e.Nombres == Criterio);
+                            break;
+                    }
+                }
+            }
+        }
+        catch (Exception)
+        {
+
+            throw;
+        }
+    }
+
+}

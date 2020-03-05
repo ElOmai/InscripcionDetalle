@@ -110,7 +110,7 @@ namespace InscripcionDetalle.Controllers
                 inscripcion = contexto.Inscripcion.Find(id);
                 if (inscripcion != null)
                 {
-                    inscripcion.Detalles = detallesController.GetInscripcions(A => A.InscripcionId == id);
+                    inscripcion.Detalles = detallesController.GetInscripcion(A => A.InscripcionId == id);
                 }
             }
             catch (Exception)
@@ -138,7 +138,7 @@ namespace InscripcionDetalle.Controllers
             }
             return paso;
         }
-        public List<Inscripcion> GetInscripcions(Expression<Func<Inscripcion, bool>> expression)
+        public List<Inscripcion> GetInscripcion(Expression<Func<Inscripcion, bool>> expression)
         {
             Contexto contexto = new Contexto();
             List<Inscripcion> lista;

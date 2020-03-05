@@ -1,0 +1,128 @@
+﻿@page "/ConsultaPago"
+@using InscripcionDetalle.Models;
+@using InscripcionDetalle.Controllers;
+<h3>Consulta de Pagos</h3>
+
+<div class="form-group row">
+    <label for="filtro">Filtro</label>
+    <div class="input-group  col-sm-10">
+        <select class="form-control" @bind="Filtro">
+            <option value="" disabled selected>Seleccione un Criterio</option>
+            <option value="Todo">Todo</option>
+            <option value="Id">Id</option>
+            <option value="estudianteid">Estudiante Id</option>
+            <option value="monto">Monto</option>
+        </select>
+
+        <div align="right" class="input-group col-md-8">
+            <label for="criterio"> Criterio&nbsp;&nbsp; </label>
+            <input type="search" class="form-control" @bind-value="Criterio" />
+        </div>
+        <button type="button" class="btn btn-outline-success" @onclick="Buscar">Buscar</button>
+    </div>
+</div>
+
+
+<div class="form-group row">
+    <input class="ml-1" type="checkbox" @bind-value="BuscarFecha" id="defaultCheck1"> Filtrar por Fecha
+    <div class="input-group  col-sm-6">
+        <label for="DesdeFecha" class="col-auto">Desde</label>
+        <input id="DesdeFecha" type="date" @bind-value="DesdeFecha" class="form-control col-6 " input />
+        <label for="HastaFechaInput" class="col-auto">&nbsp;&nbsp;Hasta</label>
+        <input type="date" Id="HastaFechaInput" @bind-value="HastaFecha" class="form-control col-6" />
+    </div>
+</div>
+
+
+<table class="table">
+    <thead class="thead-light">
+        <tr>
+            <th>PagoId</th>
+            <th>Fecha</th>
+            <th>InscripcionId</th>
+            <th>Monto</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in lista)
+        {
+            <tr>
+                <th>@item.PagoId</th>
+                <th>@item.Fecha.ToString("dd/MM/yyyy")</th>
+                <th>@item.EstudianteId</th>
+                <th>@item.Monto</th>
+                <td><a class="btn btn-sm btn-outline-primary" href="RegistroPago/@item.EstudianteId">Ver</a></td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<h5 class="text-success">@mensaje</h5>
+
+@code {
+
+    private string Filtro { get; set; }
+    private string Criterio { get; set; }
+    private string mensaje;
+
+    public bool BuscarFecha { get; set; }
+    public DateTime DesdeFecha { get; set; }
+    public DateTime HastaFecha { get; set; }
+
+    public List<Pago> lista;
+
+    protected override void OnInitialized()
+    {
+        lista = new List<Pago>();
+        DesdeFecha = DateTime.Now;
+        HastaFecha = DateTime.Now;
+    }
+
+    private void Buscar()
+    {
+        PagoController controller = new PagoController();
+        try
+        {
+            if (Filtro == null)
+            {
+                mensaje = "Debe seleccionar un Criterio";
+            }
+            else
+            {
+                lista = controller.GetPago(a => true);
+
+                if (lista.Count == 0)
+                {
+                    mensaje = "No hay Pagos Registrado";
+                }
+                else
+                {
+                    mensaje = "";
+                    switch (Filtro)
+                    {
+                        case "Todo":
+                            lista = controller.GetPago(e => true);
+                            break;
+                        case "Id":
+                            lista = controller.GetPago(e => e.PagoId == Convert.ToInt32(Criterio));
+                            break;
+                        case "estudianteid":
+                            lista = controller.GetPago(e => e.EstudianteId == Convert.ToInt32(Criterio));
+                            break;
+                        case "monto":
+                            lista = controller.GetPago(e => e.Monto == Convert.ToInt32(Criterio));
+                            break;
+                    }
+                    if (BuscarFecha == true)
+                    {
+                        lista = controller.GetPago(p => p.Fecha >= DesdeFecha.Date && p.Fecha <= HastaFecha.Date);
+                    }
+                }
+            }
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+    }
+}
