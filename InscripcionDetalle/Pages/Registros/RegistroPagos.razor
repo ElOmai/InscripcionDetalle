@@ -1,0 +1,175 @@
+﻿@page "/RegistroPago/{PagoId:int}"
+@using InscripcionDetalle.Models;
+@using InscripcionDetalle.Controllers;
+<h3>Registro de Pagos</h3>
+<EditForm Model="Pago" OnValidSubmit="Guardar">
+    <DataAnnotationsValidator />
+
+    <div class="form-group">
+        <label for="pagoid">Pago Id</label>
+        <div class="input-group col-md-3">
+            <InputNumber @bind-Value="@Pago.PagoId" class="form-control" />
+            <ValidationMessage For="@(()=>Pago.PagoId)" />
+            <button type="button" class="btn btn-outline-info" @onclick="Buscar">Buscar</button>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="fecha">Fecha</label>
+        <InputDate @bind-Value="@Pago.Fecha" class="form-control" />
+        <ValidationMessage For="@(()=>Pago.Fecha)" />
+    </div>
+
+    <div class="form-group row">
+        <label for="estudianteid">Estudiante</label>
+        <div class="col-md-6 no-padding">
+            <InputSelect @bind-Value="@EstudianteSelect" class="form-control " @onchange="CargarEstudiante" @onclick="CargarEstudiante">
+                <option value="" disabled selected>Seleccione un Estudiante</option>
+                @foreach (var item in ListaEstudiante)
+                {
+                    <option value="@item.EstudianteId">@item.Nombres</option>
+                }
+            </InputSelect>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="monto">Monto</label>
+        <InputNumber @bind-Value="@Pago.Monto" class="form-control" />
+        <ValidationMessage For="@(()=>Pago.Monto)" />
+    </div>
+
+    <div class="form-group">
+        <button type="button" class="btn btn-outline-secondary" @onclick="Limpiar">Limpiar</button>
+        <button type="submit" class="btn btn-outline-primary">Guardar</button>
+        @*<button type="button" class="btn btn-outline-danger" @onclick="Eliminar">Eliminar</button>*@
+    </div>
+    <h5 class="text-success">@mensaje</h5>
+</EditForm>
+
+@code {
+
+
+    [Parameter] public int PagoId { get; set; }
+
+    public Pago Pago = new Pago();
+    public string mensaje = "";
+
+    EstudianteController controllerEst = new EstudianteController();
+
+    private Estudiante Estudiante { get; set; }
+
+    private List<Estudiante> ListaEstudiante = new List<Estudiante>();
+
+    private string EstudianteSelect { get; set; }
+
+    protected override void OnInitialized()
+    {
+        Estudiante = new Estudiante();
+
+        ListaEstudiante = controllerEst.GetEstudiante(e => true);
+
+        Pago = new Pago();
+
+        if (PagoId != 0)
+        {
+            Pago.PagoId = PagoId;
+            Buscar();
+        }
+    }
+
+    private void CargarEstudiante()
+    {
+        try
+        {
+            Estudiante = controllerEst.Buscar(Convert.ToInt32(EstudianteSelect));
+        }
+        catch (Exception ex)
+        {
+            mensaje = ex.ToString();
+        }
+    }
+
+
+    public void Guardar()
+    {
+        PagoController controller = new PagoController();
+        if (EstudianteSelect == null)
+        {
+            mensaje = "Debe seleccionar un Estudiante";
+        }
+        else
+        {
+            Estudiante.EstudianteId = Convert.ToInt32(EstudianteSelect);
+            Pago.EstudianteId = Convert.ToInt32(EstudianteSelect);
+
+            if (Pago.Monto <= 0)
+            {
+                mensaje = "Digite el monto a pagar";
+            }
+            else
+            {
+                if (Pago.Monto > Estudiante.Balance)
+                {
+                    mensaje = "El pago es mayor a la Deuda, El Balance es: " + Estudiante.Balance;
+                }
+                else
+                {
+                    if (controller.Guardar(Pago))
+                    {
+                        mensaje = "Pago realizado con Exito";
+                        this.Pago = new Pago();
+                    }
+                    else
+                    {
+                        this.Pago = new Pago();
+                        mensaje = "Error al guardar Pago";
+                    }
+                }
+            }
+
+        }
+    }
+
+    public void Buscar()
+    {
+        PagoController controller = new PagoController();
+
+        var pago = controller.Buscar(Pago.PagoId);
+
+        if (pago != null)
+        {
+            Pago = pago;
+        }
+        else
+        {
+            Limpiar();
+            mensaje = "Pago no existe";
+        }
+    }
+
+    public void Eliminar()
+    {
+        PagoController controller = new PagoController();
+
+        var pago = controller.Buscar(Pago.PagoId);
+
+        if (pago != null)
+        {
+            controller.Eliminar(Pago.PagoId);
+            mensaje = "Pago Eliminado";
+        }
+        else
+        {
+            this.Pago = new Pago();
+            mensaje = "Error al Eliminar Pago";
+        }
+    }
+
+    public void Limpiar()
+    {
+        mensaje = "";
+        this.Pago = new Pago();
+    }
+
+}

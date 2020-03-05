@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <Folder Include="DataBase\" />
+    <Folder Include="Pages\Consultas\" />
   </ItemGroup>
 
   <ItemGroup>

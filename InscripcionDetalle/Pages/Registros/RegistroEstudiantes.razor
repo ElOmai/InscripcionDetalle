@@ -1,0 +1,143 @@
+﻿@page "/RegistroEstudiante/{EstudianteId:int}"
+@using InscripcionDetalle.Models;
+@using InscripcionDetalle.Controllers;
+<h3>Registro de Estudiantes</h3>
+<EditForm Model="Estudiante" OnValidSubmit="Guardar">
+    <DataAnnotationsValidator />
+
+    <div class="form-group">
+        <label for="estudianteid">Estudiante Id</label>
+        <div class="input-group col-md-3">
+            <InputNumber @bind-Value="@Estudiante.EstudianteId" class="form-control" />
+            <button type="button" class="btn btn-outline-info" @onclick="Buscar">Buscar</button>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="matricula">Matricula</label>
+        <InputText @bind-Value="@Estudiante.Matricula" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label for="Nombres">Nombres</label>
+        <InputText @bind-Value="@Estudiante.Nombres" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label for="balance">Balance</label>
+        <InputNumber @bind-Value="@Estudiante.Balance" class="form-control" disabled />
+    </div>
+
+    <div class="form-group">
+        <button type="button" class="btn btn-outline-secondary" @onclick="Limpiar">Limpiar</button>
+        <button type="submit" class="btn btn-outline-primary">Guardar</button>
+        <button type="button" class="btn btn-outline-danger" data-toggle="modal" data-target="#exampleModal">Eliminar</button>
+
+
+        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Atencion</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        ¿Desea eliminar Este Estudiante?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">No</button>
+                        <button type="button" data-dismiss="modal" class="btn btn-outline-danger" @onclick="Eliminar">Si</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h5 class="text-success">@mensaje</h5>
+</EditForm>
+
+@code {
+
+    [Parameter] public int EstudianteId { get; set; }
+
+    public Estudiante Estudiante = new Estudiante();
+    public string mensaje = "";
+
+    protected override void OnInitialized()
+    {
+        Estudiante = new Estudiante();
+
+        if (EstudianteId != 0)
+        {
+            Estudiante.EstudianteId = EstudianteId;
+            Buscar();
+        }
+    }
+
+    public void Guardar()
+    {
+        EstudianteController controller = new EstudianteController();
+
+        if (controller.Guardar(Estudiante))
+        {
+            mensaje = "Estudiante Guardado";
+            this.Estudiante = new Estudiante();
+        }
+        else
+        {
+            this.Estudiante = new Estudiante();
+            mensaje = "Error al guardar Estudiante";
+        }
+    }
+
+    public void Buscar()
+    {
+        EstudianteController controller = new EstudianteController();
+
+        var estudiante = controller.Buscar(Estudiante.EstudianteId);
+
+        if (estudiante != null)
+        {
+            Limpiar();
+            Estudiante = estudiante;
+        }
+        else
+        {
+            mensaje = "Estudiante no existe";
+        }
+    }
+
+    public void Eliminar()
+    {
+        EstudianteController controller = new EstudianteController();
+
+        var estudiante = controller.Buscar(Estudiante.EstudianteId);
+
+        if (estudiante != null)
+        {
+            if (Estudiante.Balance > 0)
+            {
+                mensaje = "No se puede Eliminar, Este estudiante tiene un balance pendiente de:" + Estudiante.Balance;
+            }
+            else
+            {
+                controller.Eliminar(Estudiante.EstudianteId);
+                mensaje = "Estudiante Eliminado";
+            }
+        }
+        else
+        {
+            this.Estudiante = new Estudiante();
+            mensaje = "Error al Eliminar Estudiante";
+        }
+    }
+
+    public void Limpiar()
+    {
+        mensaje = "";
+        this.Estudiante = new Estudiante();
+    }
+
+}

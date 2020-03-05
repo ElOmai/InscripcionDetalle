@@ -1,0 +1,140 @@
+﻿@page "/RegistroAsignatura/{AsignaturaId:int}"
+@using InscripcionDetalle.Models;
+@using InscripcionDetalle.Controllers;
+<h3>Registro de Asignaturas</h3>
+<EditForm Model="Asignatura" OnValidSubmit="Guardar">
+    <DataAnnotationsValidator />
+
+    <div class="form-group">
+        <label for="Asignaturaid">Asignatura Id</label>
+        <div class="input-group col-md-3">
+            <InputNumber @bind-Value="@Asignatura.AsignaturaId" class="form-control" />
+            <button type="button" class="btn btn-outline-info" @onclick="Buscar">Buscar</button>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="codigo">Codigo</label>
+        <InputText @bind-Value="@Asignatura.Codigo" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label for="descripcion">Descripcion</label>
+        <InputText @bind-Value="@Asignatura.Descripcion" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label for="prerequisito">PreRequisito</label>
+        <InputText @bind-Value="@Asignatura.PreRequisito" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label for="credito">Creditos</label>
+        <InputNumber @bind-Value="@Asignatura.Creditos" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <button type="button" class="btn btn-outline-secondary" @onclick="Limpiar">Limpiar</button>
+        <button type="submit" class="btn btn-outline-primary">Guardar</button>
+        <button type="button" class="btn btn-outline-danger" data-toggle="modal" data-target="#exampleModal">Eliminar</button>
+
+        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Atencion</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        ¿Desea eliminar Esta Asignatura?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">No</button>
+                        <button type="button" data-dismiss="modal" class="btn btn-outline-danger" @onclick="Eliminar">Si</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h5 class="text-success">@mensaje</h5>
+</EditForm>
+
+@code {
+
+    [Parameter] public int AsignaturaId { get; set; }
+
+    public Asignatura Asignatura = new Asignatura();
+    public string mensaje = "";
+
+    protected override void OnInitialized()
+    {
+        Asignatura = new Asignatura();
+
+        if (AsignaturaId != 0)
+        {
+            Asignatura.AsignaturaId = AsignaturaId;
+            Buscar();
+        }
+    }
+
+    public void Guardar()
+    {
+        AsignaturaController controller = new AsignaturaController();
+
+        if (controller.Guardar(Asignatura))
+        {
+            mensaje = "Asignatura Guardada";
+            this.Asignatura = new Asignatura();
+        }
+        else
+        {
+            this.Asignatura = new Asignatura();
+            mensaje = "Error al guardar Asignatura";
+        }
+    }
+
+    public void Buscar()
+    {
+        AsignaturaController controller = new AsignaturaController();
+
+        var asignatura = controller.Buscar(Asignatura.AsignaturaId);
+
+        if (asignatura != null)
+        {
+            Asignatura = asignatura;
+        }
+        else
+        {
+            mensaje = "Asignatura no existe";
+        }
+    }
+
+    public void Eliminar()
+    {
+        AsignaturaController controller = new AsignaturaController();
+
+        var estudiante = controller.Buscar(Asignatura.AsignaturaId);
+
+        if (estudiante != null)
+        {
+            controller.Eliminar(Asignatura.AsignaturaId);
+            mensaje = "Asignatura Eliminada";
+        }
+        else
+        {
+            this.Asignatura = new Asignatura();
+            mensaje = "Error al Eliminar Asignatura";
+        }
+    }
+
+    public void Limpiar()
+    {
+        mensaje = "";
+        this.Asignatura = new Asignatura();
+    }
+
+}
+
